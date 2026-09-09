@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Nopphawan Bunthaowong — 3D / Shader Portfolio</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html,
+    body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: #02040a;
+      color: #fff;
+      font-family:
+        Inter,
+        ui-sans-serif,
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
+    }
+
+    #canvas-container {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+    }
+
+    canvas {
+      display: block;
+    }
+
+    .interface {
+      position: fixed;
+      inset: 0;
+      z-index: 10;
+      pointer-events: none;
+    }
+
+    .topbar {
+      position: absolute;
+      top: 32px;
+      left: 42px;
+      right: 42px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      pointer-events: auto;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+    }
+
+    .logo-dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: #76e8ff;
+      box-shadow:
+        0 0 10px #76e8ff,
+        0 0 30px #76e8ff;
+    }
+
+    .nav {
+      display: flex;
+      gap: 28px;
+    }
+
+    .nav a {
+      color: rgba(255,255,255,.55);
+      text-decoration: none;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: .18em;
+      transition: .3s;
+    }
+
+    .nav a:hover {
+      color: #fff;
+    }
+
+    .hero {
+      position: absolute;
+      left: clamp(28px, 8vw, 130px);
+      top: 50%;
+      transform: translateY(-50%);
+      max-width: 720px;
+    }
+
+    .eyebrow {
+      margin-bottom: 22px;
+      color: #76e8ff;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .28em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      font-size: clamp(54px, 8vw, 124px);
+      line-height: .88;
+      letter-spacing: -.065em;
+      font-weight: 700;
+      text-shadow: 0 10px 60px rgba(0,0,0,.55);
+    }
+
+    h1 span {
+      display: block;
+      color: transparent;
+      background: linear-gradient(110deg, #ffffff 0%, #b9f3ff 45%, #55bfff 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+    }
+
+    .description {
+      max-width: 490px;
+      margin-top: 34px;
+      color: rgba(255,255,255,.64);
+      font-size: 15px;
+      line-height: 1.8;
+    }
+
+    .skills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 28px;
+    }
+
+    .skill {
+      padding: 8px 12px;
+      border: 1px solid rgba(255,255,255,.14);
+      border-radius: 100px;
+      background: rgba(255,255,255,.04);
+      backdrop-filter: blur(10px);
+      color: rgba(255,255,255,.7);
+      font-size: 10px;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+    }
+
+    .bottom-info {
+      position: absolute;
+      left: 42px;
+      right: 42px;
+      bottom: 30px;
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+    }
+
+    .project-info {
+      pointer-events: auto;
+    }
+
+    .project-number {
+      margin-bottom: 7px;
+      color: #76e8ff;
+      font-size: 10px;
+      letter-spacing: .2em;
+    }
+
+    .project-title {
+      font-size: 13px;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+
+    .interaction {
+      color: rgba(255,255,255,.42);
+      font-size: 10px;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+      text-align: right;
+    }
+
+    .interaction strong {
+      color: rgba(255,255,255,.8);
+    }
+
+    .loading {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #02040a;
+      transition: opacity .5s ease, visibility .5s ease;
+    }
+
+    .loading.hidden {
+      opacity: 0;
+      visibility: hidden;
+    }
+
+    .loader-content {
+      text-align: center;
+    }
+
+    .loader-line {
+      width: 180px;
+      height: 1px;
+      margin-top: 16px;
+      overflow: hidden;
+      background: rgba(255,255,255,.1);
+    }
+
+    .loader-line::after {
+      content: "";
+      display: block;
+      width: 40%;
+      height: 100%;
+      background: #76e8ff;
+      animation: loading 1.2s infinite ease-in-out;
+    }
+
+    @keyframes loading {
+      from { transform: translateX(-100%); }
+      to { transform: translateX(350%); }
+    }
+
+    @media (max-width: 700px) {
+      .topbar { top: 22px; left: 22px; right: 22px; }
+      .nav { display: none; }
+      .hero { left: 24px; right: 24px; top: 47%; }
+      h1 { font-size: clamp(50px, 16vw, 88px); }
+      .description { font-size: 13px; margin-top: 25px; }
+      .bottom-info { left: 24px; right: 24px; bottom: 20px; }
+      .interaction { display: none; }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="loading" id="loading">
+    <div class="loader-content">
+      <div>INITIALIZING 3D EXPERIENCE</div>
+      <div class="loader-line"></div>
+    </div>
+  </div>
+
+  <div id="canvas-container"></div>
+
+  <div class="interface">
+    <header class="topbar">
+      <div class="logo">
+        <div class="logo-dot"></div>
+        NB / PORTFOLIO
+      </div>
+      <nav class="nav">
+        <a href="#work">Work</a>
+        <a href="#shader">Shader</a>
+        <a href="#about">About</a>
+      </nav>
+    </header>
+
+    <main class="hero">
+      <div class="eyebrow">Creative Technologist / 3D Artist</div>
+      <h1>
+        Nopphawan
+        <span>Bunthaowong</span>
+      </h1>
+      <p class="description">
+        Exploring the intersection between 3D graphics, physically based
+        rendering and real-time shader programming. Creating interactive
+        visual experiences directly in the browser with WebGL and Three.js.
+      </p>
+      <div class="skills">
+        <div class="skill">Three.js</div>
+        <div class="skill">WebGL</div>
+        <div class="skill">GLSL</div>
+        <div class="skill">PBR</div>
+        <div class="skill">3D Art</div>
+        <div class="skill">Creative Coding</div>
+      </div>
+    </main>
+
+    <div class="bottom-info">
+      <div class="project-info">
+        <div class="project-number">FEATURED EXPERIMENT 001</div>
+        <div class="project-title">PBR × Procedural Cloud Shader</div>
+      </div>
+      <div class="interaction">
+        <strong>MOVE MOUSE</strong><br />
+        CONTROL CAMERA / CLOUD FIELD
+      </div>
+    </div>
+  </div>
+
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js",
+      "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.180.0/examples/jsm/"
+    }
+  }
+  </script>
+
+  <script type="module">
+    import * as THREE from "three";
+    import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
+    import { RoomEnvironment } from "three/addons/environments/RoomEnvironment.js";
+
+    const container = document.getElementById("canvas-container");
+    const loading = document.getElementById("loading");
+
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color("#02040a");
+
+    const camera = new THREE.PerspectiveCamera(42, window.innerWidth / window.innerHeight, 0.1, 100);
+    camera.position.set(0, 1.2, 5.8);
+
+    const renderer = new THREE.WebGLRenderer({
+      antialias: true,
+      powerPreference: "high-performance"
+    });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5)); // ปรับลงเหลือ 1.5 เพื่อความลื่นไหล
+    renderer.outputColorSpace = THREE.SRGBColorSpace;
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.15;
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    container.appendChild(renderer.domElement);
+
+    const pmrem = new THREE.PMREMGenerator(renderer);
+    const environment = new RoomEnvironment();
+    scene.environment = pmrem.fromScene(environment, 0.04).texture;
+    environment.dispose();
+
+    const keyLight = new THREE.DirectionalLight(0xaeeaff, 4.0);
+    keyLight.position.set(-3, 5, 4);
+    keyLight.castShadow = true;
+    scene.add(keyLight);
+
+    const rimLight = new THREE.PointLight(0x3388ff, 25, 12);
+    rimLight.position.set(3, 2, -2);
+    scene.add(rimLight);
+
+    const fillLight = new THREE.PointLight(0x9b6cff, 12, 10);
+    fillLight.position.set(-4, 0, -3);
+    scene.add(fillLight);
+
+    const modelGroup = new THREE.Group();
+    scene.add(modelGroup);
+
+    const gltfLoader = new GLTFLoader();
+    // ใช้ CDN cdn.jsdelivr.net ที่เร็วกว่า raw.githubusercontent.com
+    const MODEL_URL = "https://cdn.jsdelivr.net/gh/KhronosGroup/glTF-Sample-Assets@main/Models/DamagedHelmet/glTF-Binary/DamagedHelmet.glb";
+
+    gltfLoader.load(
+      MODEL_URL,
+      (gltf) => {
+        const model = gltf.scene;
+        model.scale.setScalar(2.15);
+        model.position.set(1.45, -1.55, 0);
+        model.rotation.y = -0.35;
+
+        model.traverse((object) => {
+          if (!object.isMesh) return;
+          object.castShadow = true;
+          object.receiveShadow = true;
+          if (object.material) {
+            object.material.envMapIntensity = 1.7;
+          }
+        });
+
+        modelGroup.add(model);
+        loading.classList.add("hidden");
+      },
+      undefined,
+      (error) => {
+        console.error("Unable to load PBR model:", error);
+        loading.classList.add("hidden");
+      }
+    );
+
+    // ปรับลดความละเอียดของ Geometry เพื่อเพิ่มประสิทธิภาพ
+    const cloudGeometry = new THREE.SphereGeometry(1, 48, 32);
+
+    const cloudMaterial = new THREE.ShaderMaterial({
+      transparent: true,
+      depthWrite: false,
+      side: THREE.DoubleSide,
+      blending: THREE.NormalBlending,
+      uniforms: {
+        uTime: { value: 0 },
+        uMouse: { value: new THREE.Vector2(0, 0) },
+        uColor: { value: new THREE.Color("#dff7ff") },
+        uShadowColor: { value: new THREE.Color("#526b9b") }
+      },
+      vertexShader: `
+        uniform float uTime;
+        uniform vec2 uMouse;
+        varying vec3 vWorldPosition;
+        varying vec3 vNormal;
+
+        void main() {
+          vec3 p = position;
+          float mouseInfluence = smoothstep(1.2, 0.0, length(p.xy - uMouse * 0.7));
+          p += normal * mouseInfluence * 0.12;
+          p.x += sin(p.y * 4.0 + uTime * 0.25) * 0.035;
+          p.z += cos(p.x * 3.0 + uTime * 0.18) * 0.025;
+
+          vec4 world = modelMatrix * vec4(p, 1.0);
+          vWorldPosition = world.xyz;
+          vNormal = normalize(normalMatrix * normal);
+          gl_Position = projectionMatrix * viewMatrix * world;
+        }
+      `,
+      fragmentShader: `
+        uniform float uTime;
+        uniform vec2 uMouse;
+        uniform vec3 uColor;
+        uniform vec3 uShadowColor;
+        varying vec3 vWorldPosition;
+        varying vec3 vNormal;
+
+        float hash(vec3 p) {
+          p = fract(p * 0.3183099 + vec3(.1,.2,.3));
+          p *= 17.0;
+          return fract(p.x * p.y * p.z * (p.x + p.y + p.z));
+        }
+
+        float noise(vec3 p) {
+          vec3 i = floor(p);
+          vec3 f = fract(p);
+          f = f * f * (3.0 - 2.0 * f);
+          return mix(
+            mix(mix(hash(i), hash(i + vec3(1,0,0)), f.x),
+                mix(hash(i + vec3(0,1,0)), hash(i + vec3(1,1,0)), f.x), f.y),
+            mix(mix(hash(i + vec3(0,0,1)), hash(i + vec3(1,0,1)), f.x),
+                mix(hash(i + vec3(0,1,1)), hash(i + vec3(1,1,1)), f.x), f.y),
+            f.z
+          );
+        }
+
+        /* ลดการวนลูป FBM จาก 6 เหลือ 3 รอบเพื่อลดภาระ GPU */
+        float fbm(vec3 p) {
+          float value = 0.0;
+          float amplitude = 0.5;
+          for(int i = 0; i < 3; i++) {
+            value += amplitude * noise(p);
+            p *= 2.0;
+            amplitude *= 0.5;
+          }
+          return value;
+        }
+
+        /* ปรับให้การคำนวณ Density กระชับและทำงานเร็วขึ้น */
+        float cloudDensity(vec3 p) {
+          float t = uTime * 0.045;
+          p.x += t;
+          float density = fbm(p);
+          return smoothstep(0.35, 0.78, density);
+        }
+
+        void main() {
+          vec3 p = normalize(vWorldPosition);
+          float density = cloudDensity(p * 2.2);
+
+          vec3 viewDir = normalize(cameraPosition - vWorldPosition);
+          float fresnel = pow(1.0 - max(dot(viewDir, vNormal), 0.0), 2.5);
+
+          vec3 lightDir = normalize(vec3(-0.4, 0.8, 0.7));
+          float light = max(dot(vNormal, lightDir), 0.0);
+
+          vec3 color = mix(uShadowColor, uColor, light);
+          color += fresnel * vec3(0.25, 0.55, 1.0);
+
+          float alpha = density * 0.72 * smoothstep(0.0, 0.25, density);
+          gl_FragColor = vec4(color, alpha);
+        }
+      `
+    });
+
+    const cloudGroup = new THREE.Group();
+    cloudGroup.position.set(-2.0, 2.4, -1.7);
+    cloudGroup.scale.set(2.5, 1.15, 0.85);
+
+    const cloud = new THREE.Mesh(cloudGeometry, cloudMaterial);
+    cloudGroup.add(cloud);
+    scene.add(cloudGroup);
+
+    // อนุภาคเมฆปรับลดเหลือ 150
+    const particleGeometry = new THREE.BufferGeometry();
+    const particleCount = 150;
+    const particlePositions = new Float32Array(particleCount * 3);
+
+    for (let i = 0; i < particleCount; i++) {
+      const radius = 8 + Math.random() * 8;
+      const angle = Math.random() * Math.PI * 2;
+      particlePositions[i * 3] = Math.cos(angle) * radius;
+      particlePositions[i * 3 + 1] = Math.random() * 7 - 1;
+      particlePositions[i * 3 + 2] = Math.sin(angle) * radius;
+    }
+
+    particleGeometry.setAttribute("position", new THREE.BufferAttribute(particlePositions, 3));
+
+    const particleMaterial = new THREE.PointsMaterial({
+      color: 0x9edfff,
+      size: 0.018,
+      transparent: true,
+      opacity: 0.42,
+      blending: THREE.AdditiveBlending
+    });
+
+    const particles = new THREE.Points(particleGeometry, particleMaterial);
+    scene.add(particles);
+
+    const mouse = new THREE.Vector2();
+    const targetMouse = new THREE.Vector2();
+
+    window.addEventListener("pointermove", (event) => {
+      targetMouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+      targetMouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+    });
+
+    const cameraTarget = new THREE.Vector3();
+    const cameraPosition = new THREE.Vector3();
+    const clock = new THREE.Clock();
+
+    function animate() {
+      requestAnimationFrame(animate);
+      const elapsed = clock.getElapsedTime();
+
+      mouse.lerp(targetMouse, 0.045);
+      cloudMaterial.uniforms.uMouse.value.lerp(mouse, 0.055);
+      cloudMaterial.uniforms.uTime.value = elapsed;
+
+      cameraPosition.set(mouse.x * 1.8, 1.15 + mouse.y * 0.65, 5.8);
+      camera.position.lerp(cameraPosition, 0.035);
+      cameraTarget.set(0.25, 0.2, 0);
+      camera.lookAt(cameraTarget);
+
+      modelGroup.rotation.y = Math.sin(elapsed * 0.25) * 0.16;
+      modelGroup.rotation.x = Math.sin(elapsed * 0.18) * 0.025;
+
+      cloudGroup.rotation.y = elapsed * 0.025 + mouse.x * 0.08;
+      cloudGroup.rotation.z = Math.sin(elapsed * 0.12) * 0.025;
+
+      particles.rotation.y = elapsed * 0.008;
+      particles.rotation.x = Math.sin(elapsed * 0.05) * 0.03;
+
+      renderer.render(scene, camera);
+    }
+
+    animate();
+
+    window.addEventListener("resize", () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
+    });
+  </script>
+</body>
+</html>
