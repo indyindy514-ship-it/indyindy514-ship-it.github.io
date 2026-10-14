@@ -13,7 +13,9 @@
   device-orientation-permission-ui="enabled: false">
 
   <a-assets>
-    <a-asset-item id="model0" src="https://aitutorialcourse.github.io/epona.glb"></a-asset-item>
+    <a-asset-item id="model0" src="https://indyindy514-ship-it.github.io/A1.glb"></a-asset-item>
+    <a-asset-item id="model1" src="https://indyindy514-ship-it.github.io/A2.glb"></a-asset-item>
+    <a-asset-item id="model2" src="https://indyindy514-ship-it.github.io/A3.glb"></a-asset-item>
 
   </a-assets>
 
@@ -24,12 +26,12 @@
 
   <!-- Target 2 -->
   <a-entity mindar-image-target="targetIndex: 1">
-    <a-gltf-model src="#model1" animation-mixer></a-gltf-model>
+    <a-gltf-model src="#model1" animation-mixer rotation="90 0 0" scale="2 2 2"></a-gltf-model>
   </a-entity>
 
   <!-- Target 3 -->
   <a-entity mindar-image-target="targetIndex: 2">
-    <a-gltf-model src="#model2" animation-mixer></a-gltf-model>
+    <a-gltf-model src="#model2" animation-mixer rotation="90 0 0" scale="2 2 2"></a-gltf-model>
   </a-entity>
 
   <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
